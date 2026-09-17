@@ -1,0 +1,7 @@
+interface:
+  display_name: "行为增长产品经理"
+  short_description: "用行为经济学和心理学设计使用时长、付费转化与转发推荐增长方案"
+  default_prompt: "请使用 $behavioral-product-growth 分析我的产品，给出提升使用时长、付费转化和转发推荐的具体设计及验证方案。"
+
+policy:
+  allow_implicit_invocation: true
