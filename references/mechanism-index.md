@@ -4,6 +4,8 @@
 
 另有[tag1全量术语索引](tag1-term-index.json)，收录12,137条保留术语；其中44条与细粒度目录名称或别名精确匹配，其余仅是待扩展召回项。 [tag1与清洗后效应库差异](effect-library-diff.json)显示两份用户资料的词面交集、各自独有项和覆盖比例。术语索引与差异文件不提供机制定义或证据结论，使用时仍须回到本目录的条件、边界和验证字段。
 
+[产品专用扩展卡](product-expansion.json)补充16张可执行卡，覆盖入门、进度、通知、习惯、推荐、排名、社会证明、默认、支付、订阅、购后、分享、奖励、反馈、实验和有效时长。扩展卡不是原文机制的同义归并；每张卡都必须回到具体产品事件和实验验证。
+
 四个分区的coverage数组为1,150个原文节点逐项登记了处置，包含案例、重复、条件、待核和19个空节点。节点登记完整与科学证据充分是两件事；原文保留、条目整理、研究核验、产品实验四个层次分别判断。
 
 ## 如何检索
@@ -18,6 +20,7 @@ python scripts/query_catalog.py --id D47
 python scripts/query_catalog.py --node 1018
 python scripts/query_catalog.py --tag1-term 推荐系统
 python scripts/query_catalog.py --effect-only
+python scripts/query_catalog.py --expansion 推荐
 python scripts/query_catalog.py --validate
 ```
 

@@ -16,6 +16,7 @@ PARTS = (
 )
 TAG1_INDEX = "tag1-term-index.json"
 EFFECT_DIFF = "effect-library-diff.json"
+PRODUCT_EXPANSION = "product-expansion.json"
 KINDS = {"机制", "模型", "调节条件", "设计方法", "证据警示"}
 ROLES = {"条目陈述", "条件或解释", "设计建议", "案例或数据", "重复", "结构标题", "空节点", "待核材料"}
 STATUSES = {"原文主张，未独立核验", "已有有限外部核查", "存在争议或原文疑点", "仅标题或证据不足"}
@@ -33,7 +34,8 @@ def load_catalog():
     source = read_json(ROOT / "references" / "source-index.json")
     tag1 = read_json(ROOT / "references" / TAG1_INDEX) if (ROOT / "references" / TAG1_INDEX).exists() else {"entries": []}
     diff = read_json(ROOT / "references" / EFFECT_DIFF) if (ROOT / "references" / EFFECT_DIFF).exists() else {"effect_only": []}
-    return parts, entries, relations, source, tag1, diff
+    expansion = read_json(ROOT / "references" / PRODUCT_EXPANSION) if (ROOT / "references" / PRODUCT_EXPANSION).exists() else {"entries": []}
+    return parts, entries, relations, source, tag1, diff, expansion
 
 
 def canonical_map(entries, relations):
@@ -143,8 +145,9 @@ def main():
     mode.add_argument("--node", type=int, help="查询原文节点、祖先和覆盖处置")
     mode.add_argument("--tag1-term", help="检索tag1全量术语索引，不代表已有机制建模")
     mode.add_argument("--effect-only", action="store_true", help="读取清洗后效应库独有术语")
+    mode.add_argument("--expansion", help="检索产品专用扩展卡")
     args = parser.parse_args()
-    parts, entries, relations, source, tag1, diff = load_catalog()
+    parts, entries, relations, source, tag1, diff, expansion = load_catalog()
     by_id = {entry["id"]: entry for entry in entries}
     canonical = canonical_map(entries, relations)
     if args.validate:
@@ -166,6 +169,11 @@ def main():
         result = [entry for entry in tag1["entries"] if query in entry["term"].casefold() or query in entry["short_name"].casefold()]
     elif args.effect_only:
         result = {"数量": len(diff.get("effect_only", [])), "术语": diff.get("effect_only", [])}
+    elif args.expansion is not None:
+        query = args.expansion.strip().casefold()
+        if not query:
+            raise ValueError("扩展卡检索词不能为空")
+        result = [entry for entry in expansion["entries"] if query in " ".join([entry["id"], entry["name"], *entry.get("source_terms", []), entry["definition"]]).casefold()]
     else:
         nodes = {node["id"]: node for node in source["nodes"]}
         if args.node not in nodes:
