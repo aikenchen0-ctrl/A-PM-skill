@@ -2,6 +2,8 @@
 
 保留18张主题卡作导航。本目录有227条原文关联记录，按11组同义或情境变体归并为216个主条目：116条机制、34条模型、24条调节条件、19条设计方法、23条证据警示。这是本目录的工作粒度，不表示116种机制互相独立或均已证实；不得把模型、方法、例子和空标题一起称为机制总数。
 
+另有[tag1全量术语索引](tag1-term-index.json)，收录12,137条保留术语；其中44条与细粒度目录名称或别名精确匹配，其余仅是待扩展召回项。 [tag1与清洗后效应库差异](effect-library-diff.json)显示两份用户资料的词面交集、各自独有项和覆盖比例。术语索引与差异文件不提供机制定义或证据结论，使用时仍须回到本目录的条件、边界和验证字段。
+
 四个分区的coverage数组为1,150个原文节点逐项登记了处置，包含案例、重复、条件、待核和19个空节点。节点登记完整与科学证据充分是两件事；原文保留、条目整理、研究核验、产品实验四个层次分别判断。
 
 ## 如何检索
@@ -14,6 +16,8 @@
 python scripts/query_catalog.py --search 自我效能
 python scripts/query_catalog.py --id D47
 python scripts/query_catalog.py --node 1018
+python scripts/query_catalog.py --tag1-term 推荐系统
+python scripts/query_catalog.py --effect-only
 python scripts/query_catalog.py --validate
 ```
 
@@ -300,4 +304,3 @@ python scripts/query_catalog.py --validate
 每条evidence_status与evidence_note说明来源状态。原文强断言不因拆成条目而得到证实；完整模型引用、争议或数值建议需要时按[来源与纠错](source-audit.md)重新核查。没有独立应用的原文也会登记，例如缺正文的标题、重复数字和存疑案例，不为覆盖率把它们改写成增长技巧。
 
 机制相近时先看related_distinctions。例如相信动作有效、相信自己能做、实际获得技能支持分别是D46、D47、C59；理解信息、接受结论和具备行动条件也不同。产品故障、供给和真实成本始终作为竞争解释。
-

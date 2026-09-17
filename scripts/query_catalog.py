@@ -14,6 +14,8 @@ PARTS = (
     "c-self-social-learning.json",
     "d-persuasion-action.json",
 )
+TAG1_INDEX = "tag1-term-index.json"
+EFFECT_DIFF = "effect-library-diff.json"
 KINDS = {"机制", "模型", "调节条件", "设计方法", "证据警示"}
 ROLES = {"条目陈述", "条件或解释", "设计建议", "案例或数据", "重复", "结构标题", "空节点", "待核材料"}
 STATUSES = {"原文主张，未独立核验", "已有有限外部核查", "存在争议或原文疑点", "仅标题或证据不足"}
@@ -29,7 +31,9 @@ def load_catalog():
     entries = [entry for part in parts for entry in part["entries"]]
     relations = read_json(ROOT / "references" / "catalog" / "relations.json")
     source = read_json(ROOT / "references" / "source-index.json")
-    return parts, entries, relations, source
+    tag1 = read_json(ROOT / "references" / TAG1_INDEX) if (ROOT / "references" / TAG1_INDEX).exists() else {"entries": []}
+    diff = read_json(ROOT / "references" / EFFECT_DIFF) if (ROOT / "references" / EFFECT_DIFF).exists() else {"effect_only": []}
+    return parts, entries, relations, source, tag1, diff
 
 
 def canonical_map(entries, relations):
@@ -137,8 +141,10 @@ def main():
     mode.add_argument("--search", help="按名称、别名及定义检索，不区分英文字母大小写")
     mode.add_argument("--id", dest="entry_id", help="读取条目及同义组中的原始记录")
     mode.add_argument("--node", type=int, help="查询原文节点、祖先和覆盖处置")
+    mode.add_argument("--tag1-term", help="检索tag1全量术语索引，不代表已有机制建模")
+    mode.add_argument("--effect-only", action="store_true", help="读取清洗后效应库独有术语")
     args = parser.parse_args()
-    parts, entries, relations, source = load_catalog()
+    parts, entries, relations, source, tag1, diff = load_catalog()
     by_id = {entry["id"]: entry for entry in entries}
     canonical = canonical_map(entries, relations)
     if args.validate:
@@ -153,6 +159,13 @@ def main():
             raise ValueError("没有找到该条目标识")
         ident = canonical[args.entry_id]
         result = {"主条目标识": ident, "相关记录": [entry for entry in entries if canonical[entry["id"]] == ident]}
+    elif args.tag1_term is not None:
+        query = args.tag1_term.strip().casefold()
+        if not query:
+            raise ValueError("tag1检索词不能为空")
+        result = [entry for entry in tag1["entries"] if query in entry["term"].casefold() or query in entry["short_name"].casefold()]
+    elif args.effect_only:
+        result = {"数量": len(diff.get("effect_only", [])), "术语": diff.get("effect_only", [])}
     else:
         nodes = {node["id"]: node for node in source["nodes"]}
         if args.node not in nodes:
